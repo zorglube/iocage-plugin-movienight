@@ -1,6 +1,6 @@
 #!/bin/sh
-# Build an iocage jail under FreeNAS 11.3-12.0 using the current release of Resilio Sync
-# git clone https://github.com/basilhendroff/freenas-iocage-rslsync
+# Build an iocage jail under FreeNAS 11.3 using the current release of Movie Night
+# git clone https://github.com/zorglube/freenas-iocage-movienight
 
 # Check for root privileges
 if ! [ $(id -u) = 0 ]; then
@@ -20,14 +20,13 @@ JAIL_INTERFACES=""
 DEFAULT_GW_IP=""
 INTERFACE="vnet0"
 VNET="on"
-POOL_PATH=""
-JAIL_NAME="rslsync"
-CONFIG_NAME="rslsync-config"
-CONFIG_PATH=""
-DATA_PATH=""
+JAIL_NAME="movienight"
+CONFIG_NAME="mn-config"
+GO_DL_VERSION=""
 
 SCRIPT=$(readlink -f "$0")
 SCRIPTPATH=$(dirname "${SCRIPT}")
+# Check for mn-config and set configuration
 if ! [ -e "${SCRIPTPATH}"/"${CONFIG_NAME}" ]; then
   echo "${SCRIPTPATH}/${CONFIG_NAME} must exist."
   exit 1
@@ -37,12 +36,6 @@ INCLUDES_PATH="${SCRIPTPATH}"/includes
 
 JAILS_MOUNT=$(zfs get -H -o value mountpoint $(iocage get -p)/iocage)
 RELEASE=$(freebsd-version | sed "s/STABLE/RELEASE/g" | sed "s/-p[0-9]*//")
-
-# Check for rslsync-config and set configuration
-if ! [ -e "${SCRIPTPATH}"/rslsync-config ]; then
-  echo "${SCRIPTPATH}/rslsync-config must exist."
-  exit 1
-fi
 
 #####
 #
@@ -63,28 +56,8 @@ if [ -z "${DEFAULT_GW_IP}" ]; then
   echo 'Configuration error: DEFAULT_GW_IP must be set'
   exit 1
 fi
-if [ -z "${POOL_PATH}" ]; then
-  echo 'Configuration error: POOL_PATH must be set'
-  exit 1
-fi
-
-# If DATA_PATH and CONFIG_PATH weren't set in rslsync-config, set them
-if [ -z "${DATA_PATH}" ]; then
-  DATA_PATH="${POOL_PATH}"/apps/rslsync/data
-fi
-if [ -z "${CONFIG_PATH}" ]; then
-  CONFIG_PATH="${POOL_PATH}"/apps/rslsync/config
-fi
-
-# Sanity check DATA_PATH and CONFIG_PATH -- they have to be different and can't be the same as POOL_PATH
-if [ "${CONFIG_PATH}" = "${DATA_PATH}" ]
-then
-  echo "CONFIG_PATH and DATA_PATH must be different!"
-  exit 1
-fi
-if [ "${DATA_PATH}" = "${POOL_PATH}" ] || [ "${CONFIG_PATH}" = "${POOL_PATH}" ]
-then
-  echo "FILES_PATH and CONFIG_PATH must all be different from POOL_PATH!"
+if [ -z "${GO_DL_VERSION}" ]; then
+  echo 'Configuration error: GO_DL_VERSION must be set'
   exit 1
 fi
 
@@ -107,10 +80,11 @@ fi
 #####
 
 # List packages to be auto-installed after jail creation
+# Certaily useless
 cat <<__EOF__ >/tmp/pkg.json
 	{
   "pkgs":[
-  "nano","bash","ca_root_nss"
+  "nano","bash","gzip"
   ]
 }
 __EOF__
@@ -125,56 +99,79 @@ rm /tmp/pkg.json
 
 #####
 #
-# Directory Creation and Mounting
+# GO Download and Setup
 #
 #####
-
-mkdir -p "${CONFIG_PATH}"
-mkdir -p "${DATA_PATH}"
-chown -R 817:817 "${CONFIG_PATH}" "${DATA_PATH}"
-
-iocage exec "${JAIL_NAME}" mkdir -p /tmp/includes
-iocage exec "${JAIL_NAME}" mkdir -p /var/db/rslsync
-iocage exec "${JAIL_NAME}" mkdir -p /usr/local/etc/rc.d
-iocage exec "${JAIL_NAME}" mkdir -p /usr/local/bin
-
-iocage exec "${JAIL_NAME}" "pw user add rslsync -c rslsync -u 817 -d /nonexistent -s /usr/bin/nologin"
-
-iocage fstab -a "${JAIL_NAME}" "${INCLUDES_PATH}" /tmp/includes nullfs rw 0 0
-iocage fstab -a "${JAIL_NAME}" "${CONFIG_PATH}" /var/db/rslsync nullfs rw 0 0
-iocage fstab -a "${JAIL_NAME}" "${DATA_PATH}" /media nullfs rw 0 0
-
-#####
-#
-# Rslsync Download and Setup
-#
-#####
-
-FILE="resilio-sync_freebsd_x64.tar.gz"
-if ! iocage exec "${JAIL_NAME}" fetch -o /tmp https://download-cdn.resilio.com/stable/FreeBSD-x64/"${FILE}"
+GO_URL="https://golang.org/dl/${GO_DL_VERSION}"
+if ! iocage exec "${JAIL_NAME}" fetch -o /tmp "${GO_URL}"
 then
-	echo "Failed to download Resilio/Sync"
+	echo "Failed to download GO"
 	exit 1
 fi
-if ! iocage exec "${JAIL_NAME}" tar xzf /tmp/"${FILE}" -C /usr/local/bin/
+if ! iocage exec "${JAIL_NAME}" tar -xzf /tmp/"${GO_DL_VERSION}" -C /usr/local/
 then
-	echo "Failed to extract Resilio/Sync"
+	echo "Failed to extract GO"
 	exit 1
 fi
-iocage exec "${JAIL_NAME}" rm /tmp/"${FILE}"
+if ! iocage exec "$#JAIL_NAME}" export PATH=$PATH:/usr/local/go/bin
+then
+	echo "Failed to export GO into PATH"
+	exit 1
+fi
+if ! iocage exec "$#JAIL_NAME}" export GO_VERSION=/usr/local/go/bin
+then
+	echo "Failed to export GO into GO_VERSION"
+	exit 1
+fi
+
+
+#####
+#
+# MovieNight Download and Setup
+#
+#####
+MN_URL="https://github.com/zorchenhimer/MovieNight/archive/master.zip"
+MN_TMP_DIR="/tmp/movienight/"
+MN_HOME="/usr/local/movienight/"
+if ! iocage exec "${JAIL_NAME}" mkdir "${MN_TMP_DIR}"
+then
+	echo "Failed to create download temp dir"
+	exit 1
+fi
+if ! iocage exec "${JAIL_NAME}" fetch -o "${MN_TMP_DIR}" "${GO_URL}"
+then
+	echo "Failed to download Movie Night"
+	exit 1
+fi
+if ! iocage exec "${JAIL_NAME}" mkdir "${MN_HOME}"
+then
+	echo "Failed to create download temp dir"
+	exit 1
+fi
+if ! iocage exec "${JAIL_NAME}" gunzip -d "${MN_TMP_DIR}"/master.zip -r "${MN_HOME}" 
+then
+	echo "Failed to extract Movie Night"
+	exit 1
+fi
+cd "{MN_HOME}"
+if ! iocage exec "$#JAIL_NAME}" make
+then
+	echo "Failed to make Movie Night"
+	exit 1
+fi
+
+#iocage exec "${JAIL_NAME}" rm "${MN_TMP_DIR}"/master.zip
+#iocage exec "${JAIL_NAME}" rm /tmp/"${GO_DL_VERSION}"
 
 # Copy pre-written config files
-iocage exec "${JAIL_NAME}" cp /tmp/includes/rslsync /usr/local/etc/rc.d/
-iocage exec "${JAIL_NAME}" cp /tmp/includes/rslsync.conf.sample /usr/local/etc/
-iocage exec "${JAIL_NAME}" cp /tmp/includes/rslsync.conf.sample /usr/local/etc/rslsync.conf
+iocage exec "${JAIL_NAME}" cp /tmp/includes/movinight /usr/local/etc/rc.d/
 
-iocage exec "${JAIL_NAME}" sysrc rslsync_enable="YES"
+iocage exec "${JAIL_NAME}" sysrc movinight_enable="YES"
 
 iocage restart "${JAIL_NAME}"
 
 # Don't need /mnt/includes any more, so unmount it
-iocage fstab -r "${JAIL_NAME}" "${INCLUDES_PATH}" /tmp/includes nullfs rw 0 0
-iocage exec "${JAIL_NAME}" rmdir /tmp/includes
+#iocage exec "${JAIL_NAME}" rmdir /tmp/includes
 
 
 

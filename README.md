@@ -22,6 +22,7 @@ Download the repository to a convenient directory on your FreeNAS system by chan
 `` 
 JAIL_IP="10.1.1.3"
 DEFAULT_GW_IP="10.1.1.1"
+GO_VERSION="go1.15.linux-amd64.tar.gz"
 `` 
 
 Many of the options are self-explanatory, and all should be adjusted to suit your needs, but only a few are mandatory. The mandatory options are:
