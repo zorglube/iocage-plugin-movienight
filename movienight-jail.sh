@@ -121,10 +121,28 @@ then
 	echo "Failed to extract GO"
 	exit 1
 fi
-PATH=$PATH":/usr/local/go/bin"
-export PATH
-GO_VERSION="/usr/local/go/bin"
-export GO_VERSION
+if ! iocage exec "${JAIL_NAME}" PATH=$PATH":/usr/local/go/bin"
+then
+	echo "Failed to prepare new PATH"
+	exit 1
+fi
+
+if ! iocage exec "${JAIL_NAME}" export PATH
+then
+	echo "Failed to export PATH"
+	exit 1
+fi
+if ! iocage exec "${JAIL_NAME}" GO_VERSION="/usr/local/go/bin"
+then
+	echo "Failed to prepare GO_VERSION"
+	exit 1
+fi
+if ! iocage exec "${JAIL_NAME}" export GO_VERSION
+then
+	echo "Failed to export GO_VERSION"
+	exit 1
+fi
+
 
 #####
 #
