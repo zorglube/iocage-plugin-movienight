@@ -131,30 +131,20 @@ export GO_VERSION
 # MovieNight Download and Setup
 #
 #####
-MN_URL="https://github.com/zorchenhimer/MovieNight/archive/master.zip"
-MN_TMP_DIR="/tmp/movienight"
+MN_URL="https://github.com/zorchenhimer/MovieNight.git"
 MN_HOME="/usr/local/movienight"
-if ! iocage exec "${JAIL_NAME}" mkdir "${MN_TMP_DIR}"
-then
-	echo "Failed to create download temp dir"
-	exit 1
-fi
-if ! iocage exec "${JAIL_NAME}" fetch -o "${MN_TMP_DIR}" "${MN_URL}"
-then
-	echo "Failed to download Movie Night"
-	exit 1
-fi
 if ! iocage exec "${JAIL_NAME}" mkdir "${MN_HOME}"
 then
 	echo "Failed to create download temp dir"
 	exit 1
 fi
-if ! iocage exec "${JAIL_NAME}" gunzip -d "${MN_TMP_DIR}"/master.zip -r "${MN_HOME}" 
+iocage exec "${JAIL_NAME}" cd "${MN_HOME}"
+if ! iocage exec "${JAIL_NAME}" git clone "${MN_URL}" "${MN_HOME}"
 then
-	echo "Failed to extract Movie Night"
+	echo "Failed to download Movie Night"
 	exit 1
 fi
-cd "{MN_HOME}"
+#iocage exec "${JAIL_NAME}" cd "${MN_HOME}"/MovieNight
 if ! iocage exec "${JAIL_NAME}" make
 then
 	echo "Failed to make Movie Night"
