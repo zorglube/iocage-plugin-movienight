@@ -97,6 +97,14 @@ then
 fi
 rm /tmp/pkg.json
 
+##
+#
+# Create user that run the MN process into the jail
+#
+##
+iocage exec "${JAIL_NAME}" "pw user add movienight -c movienight -u 850 -d /nonexistent -s /usr/bin/nologin"
+
+
 #####
 #
 # GO Download and Setup
@@ -172,9 +180,3 @@ iocage restart "${JAIL_NAME}"
 
 # Don't need /mnt/includes any more, so unmount it
 #iocage exec "${JAIL_NAME}" rmdir /tmp/includes
-
-
-
-
-
-
