@@ -30,8 +30,8 @@ load_rc_config ${name}
 : ${movinight_group:="movinight"}
 
 pidfile="/var/run/movinight/movinight.pid"
-command="/usr/local/movienight/"
-command_args=""
+command="/usr/local/movienight/movinight"
+command_args="-e true -k password -l chatillon.broncotoxique.com:8089 -r chatillon.broncotoxique.com:1935"
 
 start_precmd=movienight_prestart
 movienight_prestart() {
