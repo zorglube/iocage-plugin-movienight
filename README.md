@@ -9,21 +9,20 @@ to report any bad operation or purpose any improvement.
 
 ## Usage
 Since the COVID-19 has locked down everyone at home, we couldn't go to movie theater 
-together. MovieNight is an solution to overcome that. Quoting the MovieNight developer : 
+together. MovieNight is an solution to overcome that. Quoting the MovieNight developer: 
 "This is a single-instance streaming server with chat. [...] platform for watching movies with a group of people online." If 
 you wonder how to use after installation, have an look into the MovieNight manual [MovieNight](https://github.com/zorchenhimer/MovieNight). 
 
 ### Prerequisites
-MovieNight don't need to access any data outside of the jail. At this point, since MN 
+MovieNight don't need to access any data outside of the jail. At this point, since MN  
 need an GO runtime, the runtime will be stored into the jail. 
 
 ### Installation
-Download the repository to a convenient directory on your FreeNAS system by changing to that directory and running `git clone https://github.com/zorglube/freenas-iocage-movienight`. Then change into the new freenas-iocage-movienight directory and create a file called `mn-config` with your favorite text editor. In its minimal form, it would look like this:
-
-```
+Download the repository to a convenient directory on your FreeNAS system by changing to that directory and running `git clone https://github.com/zorglube/freenas-iocage-movienight`. Then change into the new freenas-iocage-movienight directory and create a file called `mn-config` with your favorite text editor. In its minimal form, it would look like this: 
+`` 
 JAIL_IP="10.1.1.3"
 DEFAULT_GW_IP="10.1.1.1"
-```
+`` 
 
 Many of the options are self-explanatory, and all should be adjusted to suit your needs, but only a few are mandatory. The mandatory options are:
 
@@ -40,21 +39,13 @@ In addition, there are some other options which have sensible defaults, but can 
 - VNET: Whether to use the iocage virtual network stack. Defaults to `on`.
 
 ### Execution
-
-Once you've downloaded the script and prepared the configuration file, run this script (`./rslsync-jail.sh`). The script will run for several minutes. When it finishes, your jail will be created and rslsync will be installed.
+Once you've downloaded the script and prepared the configuration file, run this script (`./movienight-jail.sh`). The script will run for several minutes. When it finishes, your jail will be created and `movienight` will be installed.
 
 ### Test
-
-To test your installation, enter your Resilio Sync jail IP address and port 8888 e.g. `10.1.1.3:8888` in a browser. If the installation was successful, you should see a Resilio Sync configuration screen.
-
-### Initial Configuration
-
-`$DATA_PATH` is mounted inside the jail at `/media`. Your backups go there. When configuring the application, point the `Default folder location` and `File download location` to `/media` in the preference settings.
+To test your installation, enter your Movie Night jail IP address and port `8089` e.g. `10.1.1.3:8089` in a browser. If the installation was successful, you should see a Movie 
+Night home page.
 
 ## Support and Discussion
+Useful sources of support include the [MovieNight](https://github.com/zorchenhimer/MovieNight). 
 
-Useful sources of support include the [Sync Help Centre](https://help.resilio.com/hc/en-us/categories/200140177-Get-started-with-Sync) and [Sync Forum](https://forum.resilio.com/)
-
-Questions or issues about this resource can be raised in [this forum thread](https://www.ixsystems.com/community/threads/scripted-resilio-sync-installation.86766/).  
-
-
+Questions or issues about this resource can be raised in [issues](https://github.com/zorglube/freenas-iocage-movienight/issues).  
