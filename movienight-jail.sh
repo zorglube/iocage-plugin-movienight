@@ -84,7 +84,7 @@ fi
 cat <<__EOF__ >/tmp/pkg.json
 	{
   "pkgs":[
-  "nano","bash","gzip"
+  "nano","bash","gzip","ca_root_nss","git"
   ]
 }
 __EOF__
@@ -116,22 +116,15 @@ then
 	echo "Failed to download GO"
 	exit 1
 fi
-if ! iocage exec "${JAIL_NAME}" tar -xzf /tmp/"${GO_DL_VERSION}" -C /usr/local/
+if ! iocage exec "${JAIL_NAME}" tar xzf /tmp/"${GO_DL_VERSION}" -C /usr/local/
 then
 	echo "Failed to extract GO"
 	exit 1
 fi
-if ! iocage exec "$#JAIL_NAME}" export PATH=$PATH:/usr/local/go/bin
-then
-	echo "Failed to export GO into PATH"
-	exit 1
-fi
-if ! iocage exec "$#JAIL_NAME}" export GO_VERSION=/usr/local/go/bin
-then
-	echo "Failed to export GO into GO_VERSION"
-	exit 1
-fi
-
+PATH=$PATH":/usr/local/go/bin"
+export PATH
+GO_VERSION="/usr/local/go/bin"
+export GO_VERSION
 
 #####
 #
@@ -139,14 +132,14 @@ fi
 #
 #####
 MN_URL="https://github.com/zorchenhimer/MovieNight/archive/master.zip"
-MN_TMP_DIR="/tmp/movienight/"
-MN_HOME="/usr/local/movienight/"
+MN_TMP_DIR="/tmp/movienight"
+MN_HOME="/usr/local/movienight"
 if ! iocage exec "${JAIL_NAME}" mkdir "${MN_TMP_DIR}"
 then
 	echo "Failed to create download temp dir"
 	exit 1
 fi
-if ! iocage exec "${JAIL_NAME}" fetch -o "${MN_TMP_DIR}" "${GO_URL}"
+if ! iocage exec "${JAIL_NAME}" fetch -o "${MN_TMP_DIR}" "${MN_URL}"
 then
 	echo "Failed to download Movie Night"
 	exit 1
@@ -162,11 +155,11 @@ then
 	exit 1
 fi
 cd "{MN_HOME}"
-if ! iocage exec "$#JAIL_NAME}" make
+if ! iocage exec "${JAIL_NAME}" make
 then
 	echo "Failed to make Movie Night"
 	exit 1
-fi
+fi 
 
 #iocage exec "${JAIL_NAME}" rm "${MN_TMP_DIR}"/master.zip
 #iocage exec "${JAIL_NAME}" rm /tmp/"${GO_DL_VERSION}"
