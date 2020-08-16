@@ -1,0 +1,43 @@
+#!/bin/sh
+#
+# $FreeBSD: head/net-p2p/rslsync/files/rslsync.in 469847 2018-05-14 02:55:52Z knu $
+#
+# PROVIDE: rslsync
+# REQUIRE: LOGIN
+# KEYWORD: shutdown
+#
+# Add the following lines to /etc/rc.conf.local or /etc/rc.conf
+# to enable this service:
+#
+# rslsync_enable (bool):        Set to NO by default.
+#                               Set it to YES to enable it.
+# rslsync_user:                 The user account rslsync daemon runs as
+#                               what you want it to be. It uses 'rslsync'
+#                               user by default. Do not sets it as empty or it
+#                               will run as root.
+# rslsync_group:                The group account rslsync daemon runs as
+#                               what you want it to be. It uses 'rslsync'
+#                               group by default. Do not sets it as empty or it
+#                               will run as wheel.
+
+. /etc/rc.subr
+name="movinight"
+rcvar="${name}_enable"
+load_rc_config ${name}
+
+: ${movinight_enable:="NO"}
+: ${movinight_user:="movinight"}
+: ${movinight_group:="movinight"}
+
+pidfile="/var/run/movinight/movinight.pid"
+command="/usr/local/movienight/"
+command_args=""
+
+start_precmd=movienight_prestart
+movienight_prestart() {
+        if [ ! -d ${pidfile%/*} ]; then
+                install -d -o ${movienight_user} -g ${movienight_group} ${pidfile%/*}
+        fi
+}
+
+run_rc_command "$1"
