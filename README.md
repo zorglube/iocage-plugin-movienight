@@ -19,11 +19,11 @@ need an GO runtime, the runtime will be stored into the jail.
 
 ### Installation
 Download the repository to a convenient directory on your FreeNAS system by changing to that directory and running `git clone https://github.com/zorglube/freenas-iocage-movienight`. Then change into the new freenas-iocage-movienight directory and create a file called `mn-config` with your favorite text editor. In its minimal form, it would look like this: 
-``
+```
     JAIL_IP="10.1.1.3"
     DEFAULT_GW_IP="10.1.1.1"
     GO_VERSION="go1.15.linux-amd64.tar.gz"
-`` 
+```
 
 You'll find the value to set `GO_VERSION` from the download section of [GO Lang](https://golang.org/dl/)
 
