@@ -144,7 +144,7 @@ then
 fi
 if ! iocage exec "${JAIL_NAME}" sed '/SHELL=${SHELL}/ c SHELL=/bin/bash' "${ROOT_PROFILE}" >> "${ROOT_PROFILE}"
 then 
-    echo "Failed to sed PATH /root/.profile"
+    echo "Failed to sed SHELL /root/.profile"
     exit 1
 fi
 if ! iocage restart "${JAIL_NAME}"
@@ -160,6 +160,7 @@ fi
 #####
 MN_URL="https://github.com/zorchenhimer/MovieNight.git"
 MN_HOME="/usr/local/movienight"
+MN_MAKEFILE="${MN_HOME}"/MakeFile
 if ! iocage exec "${JAIL_NAME}" mkdir "${MN_HOME}"
 then
 	echo "Failed to create download temp dir"
@@ -171,7 +172,11 @@ then
 	echo "Failed to download Movie Night"
 	exit 1
 fi
-#iocage exec "${JAIL_NAME}" cd "${MN_HOME}"/MovieNight
+#if ! iocage exec "${JAIL_NAME}" sed '/SHELL=${SHELL}/ c SHELL=/bin/bash' "${MN_MAKEFILE}" >> "${MN_MAKEFILE}"
+#then 
+#    echo "Failed to customise MovieNght ${MN_MAKEFILE}"
+#    exit 1
+#fi
 if ! iocage exec "${JAIL_NAME}" make
 then
 	echo "Failed to make Movie Night"
