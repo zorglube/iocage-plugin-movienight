@@ -1,22 +1,22 @@
 #!/bin/sh
 #
-# $FreeBSD: head/net-p2p/rslsync/files/rslsync.in 469847 2018-05-14 02:55:52Z knu $
+# $FreeBSD: head/net-p2p/movinight/files/movinight.in 469847 2018-05-14 02:55:52Z knu $
 #
-# PROVIDE: rslsync
+# PROVIDE: movinight
 # REQUIRE: LOGIN
 # KEYWORD: shutdown
 #
 # Add the following lines to /etc/rc.conf.local or /etc/rc.conf
 # to enable this service:
 #
-# rslsync_enable (bool):        Set to NO by default.
+# movinight_enable (bool):      Set to NO by default.
 #                               Set it to YES to enable it.
-# rslsync_user:                 The user account rslsync daemon runs as
-#                               what you want it to be. It uses 'rslsync'
+# movinight_user:               The user account movinight daemon runs as
+#                               what you want it to be. It uses 'movinight'
 #                               user by default. Do not sets it as empty or it
 #                               will run as root.
-# rslsync_group:                The group account rslsync daemon runs as
-#                               what you want it to be. It uses 'rslsync'
+# movinight_group:              The group account movinight daemon runs as
+#                               what you want it to be. It uses 'movinight'
 #                               group by default. Do not sets it as empty or it
 #                               will run as wheel.
 
@@ -31,7 +31,7 @@ load_rc_config ${name}
 
 pidfile="/var/run/movinight/movinight.pid"
 command="/usr/local/movienight/movinight"
-command_args="-e true -k password -l chatillon.broncotoxique.com:8089 -r chatillon.broncotoxique.com:1935"
+command_args="-e true -k password"
 
 start_precmd=movienight_prestart
 movienight_prestart() {
