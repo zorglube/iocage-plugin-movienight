@@ -22,7 +22,7 @@ Download the repository to a convenient directory on your FreeNAS system by chan
 ```
     JAIL_IP="10.1.1.3"
     DEFAULT_GW_IP="10.1.1.1"
-    GO_VERSION="go1.15.linux-amd64.tar.gz"
+    GO_DL_VERSION="go1.15.linux-amd64.tar.gz"
 ```
 
 You'll find the value to set `GO_VERSION` from the download section of [GO Lang](https://golang.org/dl/)
@@ -31,13 +31,16 @@ Many of the options are self-explanatory, and all should be adjusted to suit you
 
 - `JAIL_IP`: is the IP address for your jail. You can optionally add the netmask in CIDR notation (e.g., 192.168.1.199/24). If not specified, the netmask defaults to 24 bits. Values of less than 8 bits or more than 30 bits are invalid.
 - `DEFAULT_GW_IP`: is the address for your default gateway
-- `POOL_PATH`: is the path for your data pool.
+- `GO_DL_VERSION`: The version of GO SDK you want to download.
 
 In addition, there are some other options which have sensible defaults, but can be adjusted if needed. These are:
 
 - `JAIL_NAME`: The name of the jail, defaults to `movienight`
 - `INTERFACE`: The network interface to use for the jail. Defaults to `vnet0`.
 - `VNET`: Whether to use the iocage virtual network stack. Defaults to `on`.
+- `UID`: User that make run MN into the jail, default is `movienight`. 
+- `GID`: Group that make run MN into the jail, default is `movienight`.
+- `UID_GID_ID`: USer ID and Group ID, default is `850`.
 
 ### Execution
 Once you've downloaded the script and prepared the configuration file, run this script (`./movienight-jail.sh`). The script will run for several minutes. When it finishes, your jail will be created and `movienight` will be installed.

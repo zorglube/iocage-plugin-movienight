@@ -23,6 +23,9 @@ VNET="on"
 JAIL_NAME="movienight"
 CONFIG_NAME="mn-config"
 GO_DL_VERSION=""
+UID="movienight"
+GID=${UID}
+UID_GID_ID="850"
 
 SCRIPT=$(readlink -f "$0")
 SCRIPTPATH=$(dirname "${SCRIPT}")
@@ -102,7 +105,7 @@ rm /tmp/pkg.json
 # Create user that run the MN process into the jail
 #
 ##
-iocage exec "${JAIL_NAME}" "pw user add movienight -c movienight -u 850 -d /nonexistent -s /usr/bin/nologin"
+iocage exec "${JAIL_NAME}" "pw user add ${UID} -c ${GID} -u ${UID_GID_ID} -d /nonexistent -s /usr/bin/nologin"
 
 #####
 #
@@ -112,6 +115,7 @@ iocage exec "${JAIL_NAME}" "pw user add movienight -c movienight -u 850 -d /none
 USR_LOCAL="/usr/local"
 GO_URL="https://golang.org/dl/${GO_DL_VERSION}"
 GO_PATH=${USR_LOCAL}"/go/bin"
+ROOT_PROFILE="/root/.profile"
 if ! iocage exec "${JAIL_NAME}" fetch -o /tmp "${GO_URL}"
 then
 	echo "Failed to download GO"
@@ -122,23 +126,23 @@ then
 	echo "Failed to extract GO"
 	exit 1
 fi
-if ! iocage exec "${JAIL_NAME}" sed '/PATH=${PATH}/ c PATH=${PATH}:${GO_PATH}' /root/.profile
+if ! iocage exec "${JAIL_NAME}" sed '/PATH=${PATH}/ c PATH=${PATH}:${GO_PATH}' "${ROOT_PROFILE}" >> "${ROOT_PROFILE}"
 then 
     echo "Failed to sed PATH /root/.profile"
     exit 1
 fi
-if ! iocage exec "${JAIL_NAME}" sed '/PATH/ a GO_VERSION=${GO_PATH}' /root/.profile
+if ! iocage exec "${JAIL_NAME}" sed '/PATH/ a GO_VERSION=${GO_PATH}' "${ROOT_PROFILE}" >> "${ROOT_PROFILE}"
 then 
     echo "Failed to sed GO_VERSION /root/.profile"
     exit 1
 fi
 OS=`uname`
-if ! iocage exec "${JAIL_NAME}" sed '/GO_VERSION/ a OS=${OS}' /root/.profile
+if ! iocage exec "${JAIL_NAME}" sed '/GO_VERSION/ a OS=${OS}' "${ROOT_PROFILE}" >> "${ROOT_PROFILE}"
 then 
     echo "Failed to sed OS /root/.profile"
     exit 1
 fi
-if ! iocage exec "${JAIL_NAME}" sed '/SHELL=${SHELL}/ c SHELL=/bin/bash' /root/.profile
+if ! iocage exec "${JAIL_NAME}" sed '/SHELL=${SHELL}/ c SHELL=/bin/bash' "${ROOT_PROFILE}" >> "${ROOT_PROFILE}"
 then 
     echo "Failed to sed PATH /root/.profile"
     exit 1

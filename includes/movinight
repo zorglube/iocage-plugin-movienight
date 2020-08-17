@@ -30,7 +30,7 @@ load_rc_config ${name}
 : ${movinight_group:="movinight"}
 
 pidfile="/var/run/movinight/movinight.pid"
-command="/usr/local/movienight/movinight"
+command="/usr/local/movienight/MovieNight"
 command_args=""
 
 start_precmd=movienight_prestart
