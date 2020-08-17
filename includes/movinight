@@ -31,7 +31,7 @@ load_rc_config ${name}
 
 pidfile="/var/run/movinight/movinight.pid"
 command="/usr/local/movienight/movinight"
-command_args="-e true -k password"
+command_args=""
 
 start_precmd=movienight_prestart
 movienight_prestart() {

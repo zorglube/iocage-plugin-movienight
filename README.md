@@ -46,6 +46,11 @@ Once you've downloaded the script and prepared the configuration file, run this 
 To test your installation, enter your Movie Night jail IP address and port `8089` e.g. `10.1.1.3:8089` in a browser. If the installation was successful, you should see a Movie 
 Night home page.
 
+## Movie Night running configuration 
+If you want to use some run arguments at the Movie Night start, have a look here [MovieNight_Configuration](https://github.com/zorglube/MovieNight#configuration) 
+to choose your option, then edit the service startup file `/usr/local/etc/rc.d/movinight` 
+customize the line `command_args=""`
+
 ## Support and Discussion
 Useful sources of support include the [MovieNight](https://github.com/zorchenhimer/MovieNight). 
 

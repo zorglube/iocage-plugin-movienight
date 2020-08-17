@@ -84,7 +84,7 @@ fi
 cat <<__EOF__ >/tmp/pkg.json
 	{
   "pkgs":[
-  "nano","bash","gzip","ca_root_nss","git"
+  	"nano","bash","gzip","ca_root_nss","git","sed"
   ]
 }
 __EOF__
@@ -104,45 +104,50 @@ rm /tmp/pkg.json
 ##
 iocage exec "${JAIL_NAME}" "pw user add movienight -c movienight -u 850 -d /nonexistent -s /usr/bin/nologin"
 
-
 #####
 #
 # GO Download and Setup
 #
 #####
+USR_LOCAL="/usr/local"
 GO_URL="https://golang.org/dl/${GO_DL_VERSION}"
+GO_PATH=${USR_LOCAL}"/go/bin"
 if ! iocage exec "${JAIL_NAME}" fetch -o /tmp "${GO_URL}"
 then
 	echo "Failed to download GO"
 	exit 1
 fi
-if ! iocage exec "${JAIL_NAME}" tar xzf /tmp/"${GO_DL_VERSION}" -C /usr/local/
+if ! iocage exec "${JAIL_NAME}" tar xzf /tmp/"${GO_DL_VERSION}" -C "${USR_LOCAL}"
 then
 	echo "Failed to extract GO"
 	exit 1
 fi
-if ! iocage exec "${JAIL_NAME}" PATH=$PATH":/usr/local/go/bin"
-then
-	echo "Failed to prepare new PATH"
-	exit 1
+if ! iocage exec "${JAIL_NAME}" sed '/PATH=${PATH}/ c PATH=${PATH}:${GO_PATH}' /root/.profile
+then 
+    echo "Failed to sed PATH /root/.profile"
+    exit 1
 fi
-
-if ! iocage exec "${JAIL_NAME}" export PATH
-then
-	echo "Failed to export PATH"
-	exit 1
+if ! iocage exec "${JAIL_NAME}" sed '/PATH/ a GO_VERSION=${GO_PATH}' /root/.profile
+then 
+    echo "Failed to sed GO_VERSION /root/.profile"
+    exit 1
 fi
-if ! iocage exec "${JAIL_NAME}" GO_VERSION="/usr/local/go/bin"
-then
-	echo "Failed to prepare GO_VERSION"
-	exit 1
+OS=`uname`
+if ! iocage exec "${JAIL_NAME}" sed '/GO_VERSION/ a OS=${OS}' /root/.profile
+then 
+    echo "Failed to sed OS /root/.profile"
+    exit 1
 fi
-if ! iocage exec "${JAIL_NAME}" export GO_VERSION
-then
-	echo "Failed to export GO_VERSION"
-	exit 1
+if ! iocage exec "${JAIL_NAME}" sed '/SHELL=${SHELL}/ c SHELL=/bin/bash' /root/.profile
+then 
+    echo "Failed to sed PATH /root/.profile"
+    exit 1
 fi
-
+if ! iocage restart "${JAIL_NAME}"
+then 
+    echo "Fail to restart Jail"
+    exit 1
+fi
 
 #####
 #
@@ -173,11 +178,12 @@ fi
 #iocage exec "${JAIL_NAME}" rm /tmp/"${GO_DL_VERSION}"
 
 # Copy pre-written config files
+iocage fstab -a "${JAIL_NAME}" "${INCLUDES_PATH}" /tmp/includes nullfs rw 0 0
 iocage exec "${JAIL_NAME}" cp /tmp/includes/movinight /usr/local/etc/rc.d/
-
 iocage exec "${JAIL_NAME}" sysrc movinight_enable="YES"
 
 iocage restart "${JAIL_NAME}"
 
 # Don't need /mnt/includes any more, so unmount it
+#iocage fstab -r "${JAIL_NAME}" "${INCLUDES_PATH}" /tmp/includes nullfs rw 0 0
 #iocage exec "${JAIL_NAME}" rmdir /tmp/includes
