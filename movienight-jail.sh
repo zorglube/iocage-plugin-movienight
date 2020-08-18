@@ -126,23 +126,23 @@ then
 	echo "Failed to extract GO"
 	exit 1
 fi
-if ! iocage exec "${JAIL_NAME}" sed "/PATH=${PATH}/" c "PATH=${PATH}:${GO_PATH}" "${ROOT_PROFILE}" >> "${ROOT_PROFILE}"
+if ! iocage exec "${JAIL_NAME}" sed0 -i 's/PATH.*/&:'"${GO_PATH}"'/' ${ROOT_PROFILE} >> ${ROOT_PROFILE}
 then 
     echo "Failed to sed PATH /root/.profile"
     exit 1
 fi
-if ! iocage exec "${JAIL_NAME}" sed "/PATH/" a "GO_VERSION=${GO_PATH}" "${ROOT_PROFILE}" >> "${ROOT_PROFILE}"
+if ! iocage exec "${JAIL_NAME}" sed '/PATH.*/aGO_VERSION='"${GO_PATH}"'' ${ROOT_PROFILE} >> ${ROOT_PROFILE}
 then 
     echo "Failed to sed GO_VERSION /root/.profile"
     exit 1
 fi
 OS=`uname`
-if ! iocage exec "${JAIL_NAME}" sed "/GO_VERSION/" a "OS=${OS}" "${ROOT_PROFILE}" >> "${ROOT_PROFILE}"
+if ! iocage exec "${JAIL_NAME}" sed '/GO_VERSION.*/aOS='"${OS}"'' ${ROOT_PROFILE} >> ${ROOT_PROFILE}
 then 
     echo "Failed to sed OS /root/.profile"
     exit 1
 fi
-if ! iocage exec "${JAIL_NAME}" sed "/SHELL=${SHELL}/" c "SHELL=/bin/bash" "${ROOT_PROFILE}" >> "${ROOT_PROFILE}"
+if ! iocage exec "${JAIL_NAME}" sed 's/SHELL.*/&SHELL=/bin/bash/' ${ROOT_PROFILE} >> ${ROOT_PROFILE}
 then 
     echo "Failed to sed SHELL /root/.profile"
     exit 1
