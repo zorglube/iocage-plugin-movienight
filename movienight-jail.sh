@@ -26,6 +26,7 @@ GO_DL_VERSION=""
 UID="movienight"
 GID=${UID}
 UID_GID_ID="850"
+ENV_VAR_UPDATE="env_var_update.sh"
 
 SCRIPT=$(readlink -f "$0")
 SCRIPTPATH=$(dirname "${SCRIPT}")
@@ -39,6 +40,14 @@ INCLUDES_PATH="${SCRIPTPATH}"/includes
 
 JAILS_MOUNT=$(zfs get -H -o value mountpoint $(iocage get -p)/iocage)
 RELEASE=$(freebsd-version | sed "s/STABLE/RELEASE/g" | sed "s/-p[0-9]*//")
+
+#####
+#
+# Delete old Jail
+#
+#####
+iocage stop ${JAIL_NAME} 
+iocage destroy ${JAIL_NAME} 
 
 #####
 #
@@ -116,6 +125,9 @@ USR_LOCAL="/usr/local"
 GO_URL="https://golang.org/dl/${GO_DL_VERSION}"
 GO_PATH=${USR_LOCAL}"/go/bin"
 ROOT_PROFILE="/root/.profile"
+SHELL="/bin/bash"
+OS=`uname`
+
 if ! iocage exec "${JAIL_NAME}" fetch -o /tmp "${GO_URL}"
 then
 	echo "Failed to download GO"
@@ -126,27 +138,29 @@ then
 	echo "Failed to extract GO"
 	exit 1
 fi
-if ! iocage exec "${JAIL_NAME}" sed0 -i 's/PATH.*/&:'"${GO_PATH}"'/' ${ROOT_PROFILE} >> ${ROOT_PROFILE}
+
+cat "${INCLUDES_PATH}/${ENV_VAR_UPDATE}_base" | sed 's@ROOT_PROFILE@'"${ROOT_PROFILE}"'@g' | sed 's@GO_PATH@'"${GO_PATH}"'@g' | sed 's@OS_VAL@'"${OS}"'@g'| sed 's@SHELL_VAL@'"${SHELL}"'@g'> "${INCLUDES_PATH}/${ENV_VAR_UPDATE}"
+
+INCLUDE_JAIL="/tmp/includes"
+iocage exec "${JAIL_NAME}" mkdir -p ${INCLUDE_JAIL}
+iocage fstab -a "${JAIL_NAME}" "${INCLUDES_PATH}" ${INCLUDE_JAIL} nullfs rw 0 0
+
+if ! iocage exec "${JAIL_NAME}" chmod 775 ${INCLUDE_JAIL}/${ENV_VAR_UPDATE}
 then 
-    echo "Failed to sed PATH /root/.profile"
+    echo "Failed to update chmod 775"
     exit 1
 fi
-if ! iocage exec "${JAIL_NAME}" sed '/PATH.*/aGO_VERSION='"${GO_PATH}"'' ${ROOT_PROFILE} >> ${ROOT_PROFILE}
+if ! iocage exec "${JAIL_NAME}" chmod +x ${INCLUDE_JAIL}/${ENV_VAR_UPDATE}
 then 
-    echo "Failed to sed GO_VERSION /root/.profile"
+    echo "Failed to update chmod +x"
     exit 1
 fi
-OS=`uname`
-if ! iocage exec "${JAIL_NAME}" sed '/GO_VERSION.*/aOS='"${OS}"'' ${ROOT_PROFILE} >> ${ROOT_PROFILE}
+if ! iocage exec "${JAIL_NAME}" ${INCLUDE_JAIL}/${ENV_VAR_UPDATE}
 then 
-    echo "Failed to sed OS /root/.profile"
+    echo "Failed to update enviroment vars"
     exit 1
 fi
-if ! iocage exec "${JAIL_NAME}" sed 's/SHELL.*/&SHELL=/bin/bash/' ${ROOT_PROFILE} >> ${ROOT_PROFILE}
-then 
-    echo "Failed to sed SHELL /root/.profile"
-    exit 1
-fi
+
 if ! iocage restart "${JAIL_NAME}"
 then 
     echo "Fail to restart Jail"
@@ -187,7 +201,6 @@ fi
 #iocage exec "${JAIL_NAME}" rm /tmp/"${GO_DL_VERSION}"
 
 # Copy pre-written config files
-iocage fstab -a "${JAIL_NAME}" "${INCLUDES_PATH}" /tmp/includes nullfs rw 0 0
 iocage exec "${JAIL_NAME}" cp /tmp/includes/movinight /usr/local/etc/rc.d/
 iocage exec "${JAIL_NAME}" sysrc movinight_enable="YES"
 
