@@ -23,6 +23,9 @@ Download the repository to a convenient directory on your FreeNAS system by chan
     JAIL_IP="10.1.1.3"
     DEFAULT_GW_IP="10.1.1.1"
     GO_DL_VERSION="go1.15.linux-amd64.tar.gz"
+    TARGET="FreeBSD"
+    ARCH="amd64"
+    MN_REPO="https://github.com/zorchenhimer/MovieNight.git"
 ```
 
 You'll find the value to set `GO_VERSION` from the download section of [GO Lang](https://golang.org/dl/)
@@ -32,6 +35,9 @@ Many of the options are self-explanatory, and all should be adjusted to suit you
 - `JAIL_IP`: is the IP address for your jail. You can optionally add the netmask in CIDR notation (e.g., 192.168.1.199/24). If not specified, the netmask defaults to 24 bits. Values of less than 8 bits or more than 30 bits are invalid.
 - `DEFAULT_GW_IP`: is the address for your default gateway
 - `GO_DL_VERSION`: The version of GO SDK you want to download.
+- `TARGET`: one value from `android darwin dragonfly freebsd linux nacl netbsd openbsd plan9 solaris windows`.
+- `ARCH`: one value from `386 amd64 amd64p32 arm arm64 ppc64 ppc64le mips mipsle mips64 mips64le mips64p32 mips64p32leppc s390 s390x sparc sparc64`.
+- `MN_REPO`: `https://github.com/zorchenhimer/MovieNight.git` or `https://github.com/zorglube/MovieNight.git`
 
 In addition, there are some other options which have sensible defaults, but can be adjusted if needed. These are:
 
@@ -41,6 +47,7 @@ In addition, there are some other options which have sensible defaults, but can 
 - `UID`: User that make run MN into the jail, default is `movienight`. 
 - `GID`: Group that make run MN into the jail, default is `movienight`.
 - `UID_GID_ID`: USer ID and Group ID, default is `850`.
+
 
 ### Execution
 Once you've downloaded the script and prepared the configuration file, run this script (`./movienight-jail.sh`). The script will run for several minutes. When it finishes, your jail will be created and `movienight` will be installed.

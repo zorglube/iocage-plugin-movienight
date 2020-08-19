@@ -27,6 +27,9 @@ UID="movienight"
 GID=${UID}
 UID_GID_ID="850"
 ENV_VAR_UPDATE="env_var_update.sh"
+TARGET=""
+ARCH=""
+MN_REPO=""
 
 SCRIPT=$(readlink -f "$0")
 SCRIPTPATH=$(dirname "${SCRIPT}")
@@ -70,6 +73,18 @@ if [ -z "${DEFAULT_GW_IP}" ]; then
 fi
 if [ -z "${GO_DL_VERSION}" ]; then
   echo 'Configuration error: GO_DL_VERSION must be set'
+  exit 1
+fi
+if [ -z "${TARGET}" ]; then
+  echo 'Configuration error: TARGET must be set'
+  exit 1
+fi
+if [ -z "${ARCH}" ]; then
+  echo 'Configuration error: ARCH must be set'
+  exit 1
+fi
+if [ -z "${MN_REPO}" ]; then
+  echo 'Configuration error: ARCH must be set'
   exit 1
 fi
 
@@ -172,7 +187,7 @@ fi
 # MovieNight Download and Setup
 #
 #####
-MN_URL="https://github.com/zorchenhimer/MovieNight.git"
+MN_URL=${MN_REPO}
 MN_HOME="/usr/local/movienight"
 MN_MAKEFILE="${MN_HOME}"/MakeFile
 if ! iocage exec "${JAIL_NAME}" mkdir "${MN_HOME}"
@@ -191,7 +206,7 @@ fi
 #    echo "Failed to customise MovieNght ${MN_MAKEFILE}"
 #    exit 1
 #fi
-if ! iocage exec "${JAIL_NAME}" make
+if ! iocage exec "${JAIL_NAME}" make ServerMovieNight TARGET=${TARGET} ARCH=${ARCH}
 then
 	echo "Failed to make Movie Night"
 	exit 1
