@@ -141,7 +141,7 @@ fi
 
 cat "${INCLUDES_PATH}/${ENV_VAR_UPDATE}_base" | sed 's@ROOT_PROFILE@'"${ROOT_PROFILE}"'@g' | sed 's@GO_PATH@'"${GO_PATH}"'@g' | sed 's@OS_VAL@'"${OS}"'@g'| sed 's@SHELL_VAL@'"${SHELL}"'@g'> "${INCLUDES_PATH}/${ENV_VAR_UPDATE}"
 
-INCLUDE_JAIL="/tmp/includes"
+INCLUDE_JAIL="/mnt/includes"
 iocage exec "${JAIL_NAME}" mkdir -p ${INCLUDE_JAIL}
 iocage fstab -a "${JAIL_NAME}" "${INCLUDES_PATH}" ${INCLUDE_JAIL} nullfs rw 0 0
 
@@ -201,11 +201,11 @@ fi
 #iocage exec "${JAIL_NAME}" rm /tmp/"${GO_DL_VERSION}"
 
 # Copy pre-written config files
-iocage exec "${JAIL_NAME}" cp /tmp/includes/movinight /usr/local/etc/rc.d/
+iocage exec "${JAIL_NAME}" cp ${INCLUDE_JAIL}/movinight /usr/local/etc/rc.d/
 iocage exec "${JAIL_NAME}" sysrc movinight_enable="YES"
 
 iocage restart "${JAIL_NAME}"
 
 # Don't need /mnt/includes any more, so unmount it
-#iocage fstab -r "${JAIL_NAME}" "${INCLUDES_PATH}" /tmp/includes nullfs rw 0 0
-#iocage exec "${JAIL_NAME}" rmdir /tmp/includes
+#iocage fstab -r "${JAIL_NAME}" "${INCLUDES_PATH}" ${INCLUDE_JAIL} nullfs rw 0 0
+#iocage exec "${JAIL_NAME}" rmdir ${INCLUDE_JAIL}
