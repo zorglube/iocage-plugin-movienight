@@ -33,15 +33,20 @@ MN_REPO=""
 
 SCRIPT=$(readlink -f "$0")
 SCRIPTPATH=$(dirname "${SCRIPT}")
+
 # Check for mn-config and set configuration
 if ! [ -e "${SCRIPTPATH}"/"${CONFIG_NAME}" ]; then
   echo "${SCRIPTPATH}/${CONFIG_NAME} must exist."
   exit 1
 fi
+
+# Load conf vars
 . "${SCRIPTPATH}"/"${CONFIG_NAME}"
+
 INCLUDES_PATH="${SCRIPTPATH}"/includes
 
 JAILS_MOUNT=$(zfs get -H -o value mountpoint $(iocage get -p)/iocage)
+echo ${JAIL_MOUNT}
 RELEASE=$(freebsd-version | sed "s/STABLE/RELEASE/g" | sed "s/-p[0-9]*//")
 
 #####
