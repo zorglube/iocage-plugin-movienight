@@ -1,0 +1,43 @@
+#!/bin/sh
+#
+# PROVIDE: movienight
+# REQUIRE: networking
+# KEYWORD: 
+ 
+. /etc/rc.subr
+ 
+name="movienight"
+rcvar="${name}_enable"
+command="/usr/local/${name}/MovieNight -f /usr/local/${name}/settings.json"
+movienight_user="${name}"
+pidfile="/var/run/${name}.pid"
+ 
+start_cmd="${name}_start"
+stop_cmd="${name}_stop"
+status_cmd="${name}_status"
+
+movienight_start() {
+	/usr/sbin/daemon -P ${pidfile} -r -f -u $movienight_user $command
+}
+
+movienight_stop() {
+	if [ -e "${pidfile}" ]; then
+		kill -s TERM `cat ${pidfile}`
+	else
+		echo "${name} is not running"
+	fi
+
+}
+
+movienight_status() {
+	if [ -e "${pidfile}" ]; then
+		echo "${name} is running as pid `cat ${pidfile}`"
+	else
+		echo "${name} is not running"
+	fi
+}
+ 
+load_rc_config $name
+: ${movienight_enable:=no}
+ 
+run_rc_command "$1"
