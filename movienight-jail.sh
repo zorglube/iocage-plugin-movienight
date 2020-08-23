@@ -193,7 +193,7 @@ fi
 #####
 MN_URL=${MN_REPO}
 MN_HOME="/usr/local/movienight"
-MN_MAKEFILE="${MN_HOME}"/MakeFile
+MN_MAKEFILE="${MN_HOME}"/Makefile.BSD
 if ! iocage exec "${JAIL_NAME}" mkdir "${MN_HOME}"
 then
 	echo "Failed to create download temp dir"
@@ -215,7 +215,7 @@ then
     echo "Failed link to GOFMT"
     exit 1
 fi
-if ! iocage exec "${JAIL_NAME}" make TARGET=${TARGET} ARCH=${ARCH} -C ${MN_HOME} -f MakeFile.BSD
+if ! iocage exec "${JAIL_NAME}" "make TARGET=${TARGET} ARCH=${ARCH} -f ${MN_MAKEFILE} -C ${MN_HOME}"
 then
 	echo "Failed to make Movie Night"
 	exit 1
