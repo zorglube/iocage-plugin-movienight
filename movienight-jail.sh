@@ -215,7 +215,7 @@ then
     echo "Failed link to GOFMT"
     exit 1
 fi
-if ! iocage exec "${JAIL_NAME}" make TARGET=${TARGET} ARCH=${ARCH} -C ${MN_HOME}
+if ! iocage exec "${JAIL_NAME}" make TARGET=${TARGET} ARCH=${ARCH} -C ${MN_HOME} -f MakeFile.BSD
 then
 	echo "Failed to make Movie Night"
 	exit 1
