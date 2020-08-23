@@ -7,20 +7,8 @@ then
    exit 1
 fi
 
-if ! mv ROOT_PROFILE ROOT_PROFILE_old
-then 
-	echo "mv error" 
-	exit 1 
-fi
-if ! cat ROOT_PROFILE_old | sed 's@PATH='"${PATH}"'@PATH='"${PATH}"':GO_PATH@g' >> ROOT_PROFILE_tmp 
-then 
-	echo "sed 1" 
-	exit 1 
-fi
-if ! cat ROOT_PROFILE_tmp | sed 's@PATH.*@&OS="OS_VAL"@g' | sed 's@PATH.*@&SHELL="SHELL_VAL"@g'>> ROOT_PROFILE 
-then 
-	echo "sed 2" 
-	exit 1 
-fi
+echo "setenv	OS	OS_VAL" >> /root/.cshrc
+echo "setenv	GO	GO_PATH" >> /root/.cshrc
+echo "setenv	PATH	GO_PATH:$PATH" >> /root/.cshrc
 
 exit 0 

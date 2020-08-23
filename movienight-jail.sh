@@ -46,7 +46,6 @@ fi
 INCLUDES_PATH="${SCRIPTPATH}"/includes
 
 JAILS_MOUNT=$(zfs get -H -o value mountpoint $(iocage get -p)/iocage)
-echo ${JAIL_MOUNT}
 RELEASE=$(freebsd-version | sed "s/STABLE/RELEASE/g" | sed "s/-p[0-9]*//")
 
 #####
@@ -122,7 +121,7 @@ cat <<__EOF__ >/tmp/pkg.json
 __EOF__
 
 # Create the jail and install previously listed packages
-if ! iocage create --name "${JAIL_NAME}" -p /tmp/pkg.json -r "${RELEASE}" interfaces="${JAIL_INTERFACES}" ip4_addr="${INTERFACE}|${JAIL_IP}/24" defaultrouter="${DEFAULT_GW_IP}" boot="on" host_hostname="${JAIL_NAME}" vnet="${VNET}"
+if ! iocage create --name "${JAIL_NAME}" -p /tmp/pkg.json -r "${RELEASE}" interfaces="${JAIL_INTERFACES}" ip4_addr="${INTERFACE}|${JAIL_IP}/24" defaultrouter="${DEFAULT_GW_IP}" boot="on" host_hostname="${JAIL_NAME}" vnet="${VNET}" 
 then
 	echo "Failed to create jail"
 	exit 1
@@ -159,7 +158,7 @@ then
 	exit 1
 fi
 
-cat "${INCLUDES_PATH}/${ENV_VAR_UPDATE}_base" | sed 's@ROOT_PROFILE@'"${ROOT_PROFILE}"'@g' | sed 's@GO_PATH@'"${GO_PATH}"'@g' | sed 's@OS_VAL@'"${OS}"'@g'| sed 's@SHELL_VAL@'"${SHELL}"'@g'> "${INCLUDES_PATH}/${ENV_VAR_UPDATE}"
+cat "${INCLUDES_PATH}/${ENV_VAR_UPDATE}_base" | sed 's@GO_PATH@'"${GO_PATH}"'@g' | sed 's@OS_VAL@'"${OS}"'@g' > "${INCLUDES_PATH}/${ENV_VAR_UPDATE}"
 
 INCLUDE_JAIL="/mnt/includes"
 iocage exec "${JAIL_NAME}" mkdir -p ${INCLUDE_JAIL}
@@ -206,26 +205,37 @@ then
 	echo "Failed to download Movie Night"
 	exit 1
 fi
-#if ! iocage exec "${JAIL_NAME}" sed '/SHELL=${SHELL}/ c SHELL=/bin/bash' "${MN_MAKEFILE}" >> "${MN_MAKEFILE}"
-#then 
-#    echo "Failed to customise MovieNght ${MN_MAKEFILE}"
-#    exit 1
-#fi
-if ! iocage exec "${JAIL_NAME}" make ServerMovieNight TARGET=${TARGET} ARCH=${ARCH}
+if ! iocage exec "${JAIL_NAME}" link ${GO_PATH}/go ${USR_LOCAL}/bin/go
+then 
+    echo "Failed link to GO"
+    exit 1
+fi
+if ! iocage exec "${JAIL_NAME}" link ${GO_PATH}/gofmt ${USR_LOCAL}/bin/gofmt
+then 
+    echo "Failed link to GOFMT"
+    exit 1
+fi
+if ! iocage exec "${JAIL_NAME}" make TARGET=${TARGET} ARCH=${ARCH} -C ${MN_HOME}
 then
 	echo "Failed to make Movie Night"
 	exit 1
 fi 
 
-#iocage exec "${JAIL_NAME}" rm "${MN_TMP_DIR}"/master.zip
-#iocage exec "${JAIL_NAME}" rm /tmp/"${GO_DL_VERSION}"
+if ! iocage exec ${JAIL_NAME} chown -R ${UID}:${GID} ${MN_HOME}
+then
+	echo "Failed to chown ${MN_HOME}"
+	exit 1
+fi 
+
+iocage exec "${JAIL_NAME}" rm /tmp/"${GO_DL_VERSION}"
 
 # Copy pre-written config files
-iocage exec "${JAIL_NAME}" cp ${INCLUDE_JAIL}/movinight /usr/local/etc/rc.d/
-iocage exec "${JAIL_NAME}" sysrc movinight_enable="YES"
+iocage exec "${JAIL_NAME}" cp ${INCLUDE_JAIL}/movienight /usr/local/etc/rc.d/
+iocage exec "${JAIL_NAME}" chmod +x /usr/local/etc/rc.d/movienight
+iocage exec "${JAIL_NAME}" sysrc movienight_enable="YES"
 
 iocage restart "${JAIL_NAME}"
 
 # Don't need /mnt/includes any more, so unmount it
-#iocage fstab -r "${JAIL_NAME}" "${INCLUDES_PATH}" ${INCLUDE_JAIL} nullfs rw 0 0
-#iocage exec "${JAIL_NAME}" rmdir ${INCLUDE_JAIL}
+iocage fstab -r "${JAIL_NAME}" "${INCLUDES_PATH}" ${INCLUDE_JAIL} nullfs rw 0 0
+iocage exec "${JAIL_NAME}" rmdir ${INCLUDE_JAIL}
