@@ -9,28 +9,29 @@
 name="movienight"
 rcvar="${name}_enable"
 command="/usr/local/${name}/MovieNight -f /usr/local/${name}/settings.json"
-movienight_user="${name}"
+daemon_user="${name}"
 pidfile="/var/run/${name}.pid"
  
-start_cmd="${name}_start"
-stop_cmd="${name}_stop"
-status_cmd="${name}_status"
+start_cmd="daemon_start"
+stop_cmd="daemon_stop"
+status_cmd="daemon_status"
 
-movienight_start() {
-	/usr/sbin/daemon -P ${pidfile} -r -f -u $movienight_user $command
+daemon_start() {
+	/usr/sbin/daemon -P ${pidfile} -r -f -u $daemon_user $command
 }
 
-movienight_stop() {
-	if [ -e "${pidfile}" ]; then
+daemon_stop() {
+	if [ -e "${pidfile}" ]; 
+	then
 		kill -s TERM `cat ${pidfile}`
 	else
 		echo "${name} is not running"
 	fi
-
 }
 
-movienight_status() {
-	if [ -e "${pidfile}" ]; then
+daemon_status() {
+	if [ -e "${pidfile}" ]; 
+	then
 		echo "${name} is running as pid `cat ${pidfile}`"
 	else
 		echo "${name} is not running"
@@ -38,6 +39,6 @@ movienight_status() {
 }
  
 load_rc_config $name
-: ${movienight_enable:=no}
+: ${${name}_enable:=no}
  
 run_rc_command "$1"
