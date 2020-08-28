@@ -1,5 +1,6 @@
 #!/bin/sh
-# Build an iocage jail under FreeNAS 11.3 using the current release of Movie Night
+# This script is the post install of the MovieNight FreeNAS plugin. 
+# It's main purpose is to download GoLang SDK and MovieNight sources, then it build MovieNight and run it.   
 # git clone https://github.com/zorglube/freenas-iocage-movienight
 
 # Check for root privileges
@@ -19,27 +20,12 @@ fi
 UID="movienight"
 GID=${UID}
 UID_GID_ID="850"
-ENV_VAR_UPDATE="env_var_update.sh"
-TARGET=""
-ARCH=""
-MN_REPO=""
+TARGET="freebsd"
+ARCH="386"
+MN_REPO="https://github.com/zorglube/MovieNight.git"
 
-SCRIPT=$(readlink -f "$0")
-SCRIPTPATH=$(dirname "${SCRIPT}")
-
-# Check for mn-config and set configuration
-if ! [ -e ${SCRIPTPATH}"/"${CONFIG_NAME} ]; then
-  echo "${SCRIPTPATH}/${CONFIG_NAME} must exist."
-  exit 1
-fi
-
-# Load conf vars
-. ${SCRIPTPATH}"/"${CONFIG_NAME}
-
-INCLUDES_PATH="${SCRIPTPATH}/includes"
-
-JAILS_MOUNT=$(zfs get -H -o value mountpoint $(iocage get -p)/iocage)
-RELEASE=$(freebsd-version | sed "s/STABLE/RELEASE/g" | sed "s/-p[0-9]*//")
+#SCRIPT=$(readlink -f "$0")
+#SCRIPTPATH=$(dirname "${SCRIPT}")
 
 ##
 #
@@ -95,19 +81,19 @@ fi
 cd ${MN_HOME}
 if ! git clone ${MN_URL} ${MN_HOME}
 then
-	echo "Failed to download Movie Night"
+	echo "Failed to clone Movie Night"
 	exit 1
 fi
-if ! link ${GO_PATH}/go ${USR_LOCAL}/bin/go
-then 
-    echo "Failed link to GO"
-    exit 1
-fi
-if ! link ${GO_PATH}/gofmt ${USR_LOCAL}/bin/gofmt
-then 
-    echo "Failed link to GOFMT"
-    exit 1
-fi
+#if ! link ${GO_PATH}/go ${USR_LOCAL}/bin/go
+#then 
+#    echo "Failed link to GO"
+#    exit 1
+#fi
+#if ! link ${GO_PATH}/gofmt ${USR_LOCAL}/bin/gofmt
+#then 
+#    echo "Failed link to GOFMT"
+#    exit 1
+#fi
 if ! make TARGET=${TARGET} ARCH=${ARCH} -f ${MN_MAKEFILE} -C ${MN_HOME}
 then
 	echo "Failed to make Movie Night"
