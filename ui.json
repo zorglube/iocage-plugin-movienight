@@ -1,3 +1,4 @@
 {
-    "adminportal": "http://%%IP%%:8089"
+    "adminportal": "http://%%IP%%:8089",
+    "docurl": "https://github.com/zorchenhimer/MovieNight"
 }
