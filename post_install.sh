@@ -17,15 +17,15 @@ fi
 #####
 
 # Initialize defaults
-UID="movienight"
+UID=movienight
 GID=${UID}
-UID_GID_ID="850"
-TARGET="freebsd"
-ARCH="amd64"
-MN_REPO="https://github.com/zorglube/MovieNight.git"
+UID_GID_ID=850
+TARGET=freebsd
+ARCH=amd64
+MN_REPO=https://github.com/zorglube/MovieNight.git
 
-#SCRIPT=$(readlink -f "$0")
-#SCRIPTPATH=$(dirname "${SCRIPT}")
+#SCRIPT=$(readlink -f $0)
+#SCRIPTPATH=$(dirname ${SCRIPT})
 
 #####
 #
@@ -40,15 +40,15 @@ pw user add ${UID} -c ${GID} -u ${UID_GID_ID} -d /nonexistent -s /usr/bin/nologi
 #
 #####
 MN_URL=${MN_REPO}
-MN_HOME="/usr/local/movienight"
-MN_MAKEFILE=${MN_HOME}"/Makefile.BSD"
+MN_HOME=/usr/local/movienight
+MN_MAKEFILE=${MN_HOME}/Makefile.BSD
 if ! mkdir ${MN_HOME}
 then
 	echo "Failed to create download temp dir"
 	exit 1
 fi
 cd ${MN_HOME}
-if ! git clone ${MN_URL} ${MN_HOME}
+if ! git clone ${MN_REPO} ${MN_HOME}
 then
 	echo "Failed to clone Movie Night"
 	exit 1
