@@ -11,14 +11,15 @@ rcvar="${name}_enable"
 command="/usr/local/${name}/MovieNight -f /usr/local/${name}/settings.json"
 daemon_user="movien"
 managerPid="/var/run/${name}.manager.pid"
-mnPid="/var/run/${name}.pid"
+appPid="/var/run/${name}.pid"
+logFile="/var/log/${name}.log"
 
 start_cmd="daemon_start"
 stop_cmd="daemon_stop"
 status_cmd="daemon_status"
 
 daemon_start() {
-	/usr/sbin/daemon -P ${managerPid} -p ${mnPid} -r -f -S -o /var/log/${name}.log -u ${daemon_user} ${command}
+	/usr/sbin/daemon -P ${managerPid} -p ${appPid} -r -f -S -o ${logFile} -u ${daemon_user} ${command}
 }
 
 daemon_stop() {
@@ -31,15 +32,15 @@ daemon_stop() {
 }
 
 daemon_status() {
-	if [ -e "${mnPid}" ]; 
+	if [ -e "${appPid}" ]; 
 	then
-		echo "${name} is running as pid `cat ${mnPid}`, with daemon manager (pid `cat ${managerPid}`)"
+		echo "${name} is running as pid `cat ${appPid}`, with daemon manager (pid `cat ${managerPid}`)"
 	else
 		echo "${name} is not running"
 	fi
 }
  
 load_rc_config $name
-: ${rcvar:=no}
+: ${rcvar:="NO"}
  
 run_rc_command "$1"
