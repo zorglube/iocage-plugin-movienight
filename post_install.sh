@@ -21,7 +21,7 @@ UID="movienight"
 GID=${UID}
 UID_GID_ID="850"
 TARGET="freebsd"
-ARCH="386"
+ARCH="amd64"
 MN_REPO="https://github.com/zorglube/MovieNight.git"
 
 #SCRIPT=$(readlink -f "$0")
