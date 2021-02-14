@@ -44,7 +44,7 @@ MN_HOME=/usr/local/movienight
 MN_MAKEFILE=${MN_HOME}/Makefile.BSD
 mkdir ${MN_HOME}
 cd ${MN_HOME}
-git clone ${MN_REPO} ${MN_HOME}
+git clone ${MN_REPO} ${MN_HOME} --verbose
 make TARGET=${TARGET} ARCH=${ARCH} -f ${MN_MAKEFILE} -C ${MN_HOME}
 chown -R ${UID}:${GID} ${MN_HOME}
 # Set the MovieNight config
