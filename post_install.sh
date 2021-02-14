@@ -4,11 +4,11 @@
 # git clone https://github.com/zorglube/freenas-iocage-movienight
 
 # Check for root privileges
-if ! [ $(id -u) = 0 ]; 
-then
-   echo "This script must be run with root privileges"
-   exit 1
-fi
+#if ! [ $(id -u) = 0 ]; 
+#then
+#   echo "This script must be run with root privileges"
+#   exit 1
+#fi
 
 #####
 #
