@@ -15,36 +15,30 @@
 # General configuration
 #
 #####
-
-# Initialize defaults
-# UID:GID is 'movien' because 'movienight' is to long
-UID=movien
-GID=${UID}
-UID_GID_ID=850
-TARGET=freebsd
-ARCH=amd64
-MN_REPO=https://github.com/zorglube/MovieNight.git
-
 #SCRIPT=$(readlink -f $0)
 #SCRIPTPATH=$(dirname ${SCRIPT})
-
 #####
 #
 # Create user that run the MN process into the jail
 #
 #####
+# UID:GID is 'movien' because 'movienight' is to long
+UID=movien
+GID=${UID}
+UID_GID_ID=850
 pw user add ${UID} -c ${GID} -u ${UID_GID_ID} -d /nonexistent -s /usr/bin/nologin
 
 #####
 #
-# MovieNight Download and Setup
+# MovieNight Download and build
 #
 #####
-MN_URL=${MN_REPO}
+TARGET=freebsd
+ARCH=amd64
+MN_REPO=https://github.com/zorglube/MovieNight.git
 MN_HOME=/usr/local/movienight
 MN_MAKEFILE=${MN_HOME}/Makefile.BSD
 mkdir ${MN_HOME}
-cd ${MN_HOME}
 git clone ${MN_REPO} ${MN_HOME} --verbose
 make TARGET=${TARGET} ARCH=${ARCH} -f ${MN_MAKEFILE} -C ${MN_HOME}
 chown -R ${UID}:${GID} ${MN_HOME}
