@@ -106,7 +106,8 @@ then
 	exit 1
 fi 
 
-rm /tmp/${GO_DL_VERSION}
+# Create MN log file
+touch /var/log/movienight.log
 
 # Enable the service
 sysrc -f /etc/rc.conf movienight_enable="YES"
