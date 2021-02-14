@@ -42,33 +42,11 @@ pw user add ${UID} -c ${GID} -u ${UID_GID_ID} -d /nonexistent -s /usr/bin/nologi
 MN_URL=${MN_REPO}
 MN_HOME=/usr/local/movienight
 MN_MAKEFILE=${MN_HOME}/Makefile.BSD
-#if ! 
 mkdir ${MN_HOME}
-#then
-	echo "Failed to create download temp dir"
-#	exit 1
-#fi
 cd ${MN_HOME}
-#if ! 
 git clone ${MN_REPO} ${MN_HOME}
-#then
-	echo "Failed to clone Movie Night"
-#	exit 1
-#fi
-#if ! 
 make TARGET=${TARGET} ARCH=${ARCH} -f ${MN_MAKEFILE} -C ${MN_HOME}
-#then
-	echo "Failed to make Movie Night"
-#	exit 1
-#fi 
-
-#if ! 
 chown -R ${UID}:${GID} ${MN_HOME}
-#then
-	echo "Failed to chown ${MN_HOME}"
-#	exit 1
-#fi 
-
 # Set the MovieNight config
 rm ${MN_HOME}/settings.json
 mv ${MN_HOME}/settings-freebsd.json ${MN_HOME}/settings.json
