@@ -17,7 +17,8 @@
 #####
 
 # Initialize defaults
-UID=movienight
+# UID:GID is 'movien' because 'movienight' is to long
+UID=movien
 GID=${UID}
 UID_GID_ID=850
 TARGET=freebsd
