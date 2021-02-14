@@ -27,11 +27,11 @@ MN_REPO="https://github.com/zorglube/MovieNight.git"
 #SCRIPT=$(readlink -f "$0")
 #SCRIPTPATH=$(dirname "${SCRIPT}")
 
-##
+#####
 #
 # Create user that run the MN process into the jail
 #
-##
+#####
 pw user add ${UID} -c ${GID} -u ${UID_GID_ID} -d /nonexistent -s /usr/bin/nologin
 
 #####
@@ -65,15 +65,9 @@ then
 	exit 1
 fi 
 
-#####
-#
 # Set the MovieNight config
-#
-#####
-
 rm ${MN_HOME}/settings.json
 mv ${MN_HOME}/settings-freebsd.json ${MN_HOME}/settings.json
-
 # Create MN log file
 touch /var/log/movienight.log
 # Enable the service
