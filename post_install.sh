@@ -72,9 +72,11 @@ chown -R ${UID}:${GID} ${MN_HOME}
 # Set the MovieNight config
 rm ${MN_HOME}/settings.json
 mv ${MN_HOME}/settings-freebsd.json ${MN_HOME}/settings.json
+chmod 755 ${MN_HOME}
+chmod +x ${MN_HOME}/MovieNight
 # Create MN log file
 touch /var/log/movienight.log
 # Enable the service
 sysrc -f /etc/rc.conf movienight_enable="YES"
 # Start the service
-service movienight start 2>/dev/null
+service movienight start
