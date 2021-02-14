@@ -36,37 +36,6 @@ pw user add ${UID} -c ${GID} -u ${UID_GID_ID} -d /nonexistent -s /usr/bin/nologi
 
 #####
 #
-# GO Download and Setup
-#
-#####
-USR_LOCAL="/usr/local"
-GO_DL_VERSION="go1.15.freebsd-amd64.tar.gz"
-GO_URL="https://golang.org/dl/${GO_DL_VERSION}"
-GO_PATH=${USR_LOCAL}"/go/bin"
-ROOT_PROFILE="/root/.profile"
-SHELL="/bin/bash"
-OS=`uname`
-
-if ! fetch -o /tmp ${GO_URL}
-then
-	echo "Failed to download GO"
-	exit 1
-fi
-if ! tar xzf /tmp/${GO_DL_VERSION} -C ${USR_LOCAL}
-then
-	echo "Failed to extract GO"
-	exit 1
-fi
-
-echo "setenv  OS  ${OS}" >> /root/.cshrc
-echo "setenv  GO  ${GO_PATH}" >> /root/.cshrc
-echo "setenv  PATH    ${PATH}:${GO_PATH}" >> /root/.cshrc
-setenv  OS  ${OS}
-setenv  GO  ${GO_PATH}
-setenv  PATH    ${PATH}:${GO_PATH}
-
-#####
-#
 # MovieNight Download and Setup
 #
 #####
@@ -84,16 +53,6 @@ then
 	echo "Failed to clone Movie Night"
 	exit 1
 fi
-#if ! link ${GO_PATH}/go ${USR_LOCAL}/bin/go
-#then 
-#    echo "Failed link to GO"
-#    exit 1
-#fi
-#if ! link ${GO_PATH}/gofmt ${USR_LOCAL}/bin/gofmt
-#then 
-#    echo "Failed link to GOFMT"
-#    exit 1
-#fi
 if ! make TARGET=${TARGET} ARCH=${ARCH} -f ${MN_MAKEFILE} -C ${MN_HOME}
 then
 	echo "Failed to make Movie Night"
@@ -106,9 +65,17 @@ then
 	exit 1
 fi 
 
+#####
+#
+# Set the MovieNight config
+#
+#####
+
+rm ${MN_HOME}/settings.json
+mv ${MN_HOME}/settings-freebsd.json ${MN_HOME}/settings.json
+
 # Create MN log file
 touch /var/log/movienight.log
-
 # Enable the service
 sysrc -f /etc/rc.conf movienight_enable="YES"
 # Start the service
