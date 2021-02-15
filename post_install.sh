@@ -39,7 +39,7 @@ MN_REPO=https://github.com/zorglube/MovieNight.git
 MN_HOME=/usr/local/movienight
 MN_MAKEFILE=${MN_HOME}/Makefile.BSD
 mkdir ${MN_HOME}
-git clone ${MN_REPO} ${MN_HOME} --verbose
+git clone ${MN_REPO} ${MN_HOME}
 make TARGET=${TARGET} ARCH=${ARCH} -f ${MN_MAKEFILE} -C ${MN_HOME}
 chown -R ${UID}:${GID} ${MN_HOME}
 # Set the MovieNight config
@@ -52,4 +52,4 @@ touch /var/log/movienight.log
 # Enable the service
 sysrc -f /etc/rc.conf movienight_enable="YES"
 # Start the service
-service movienight start
+service movienight start 2>/dev/null 
