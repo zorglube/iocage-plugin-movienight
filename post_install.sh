@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash +x
 # This script is the post install of the MovieNight FreeNAS plugin. 
 # It's main purpose is to download GoLang SDK and MovieNight sources, then it build MovieNight and run it.   
 # git clone https://github.com/zorglube/freenas-iocage-movienight
@@ -39,7 +39,7 @@ MN_REPO=https://github.com/zorglube/MovieNight.git
 MN_HOME=/usr/local/movienight
 MN_MAKEFILE=${MN_HOME}/Makefile.BSD
 mkdir ${MN_HOME}
-git clone ${MN_REPO} ${MN_HOME}
+git clone ${MN_REPO} ${MN_HOME} --verbose 
 make TARGET=${TARGET} ARCH=${ARCH} -f ${MN_MAKEFILE} -C ${MN_HOME}
 chown -R ${UID}:${GID} ${MN_HOME}
 # Set the MovieNight config
