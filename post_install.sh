@@ -1,10 +1,10 @@
 #!/bin/bash +x
-# This script is the post install of the MovieNight FreeNAS plugin. 
-# It's main purpose is to download GoLang SDK and MovieNight sources, then it build MovieNight and run it.   
+# This script is the post install of the MovieNight FreeNAS plugin.
+# It's main purpose is to download GoLang SDK and MovieNight sources, then it build MovieNight and run it.
 # git clone https://github.com/zorglube/freenas-iocage-movienight
 
 # Check for root privileges
-#if ! [ $(id -u) = 0 ]; 
+#if ! [ $(id -u) = 0 ];
 #then
 #   echo "This script must be run with root privileges"
 #   exit 1
@@ -39,7 +39,7 @@ MN_REPO=https://github.com/zorglube/MovieNight.git
 MN_HOME=/usr/local/movienight
 MN_MAKEFILE=${MN_HOME}/Makefile.BSD
 mkdir ${MN_HOME}
-git clone ${MN_REPO} ${MN_HOME} --verbose 
+git clone --verbose --progress --bare --branch master --no-tags ${MN_REPO} ${MN_HOME}
 make TARGET=${TARGET} ARCH=${ARCH} -f ${MN_MAKEFILE} -C ${MN_HOME}
 chown -R ${UID}:${GID} ${MN_HOME}
 # Set the MovieNight config
@@ -52,4 +52,5 @@ touch /var/log/movienight.log
 # Enable the service
 sysrc -f /etc/rc.conf movienight_enable="YES"
 # Start the service
-service movienight start 2>/dev/null 
+service movienight start 2>/dev/null
+
