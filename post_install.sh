@@ -25,7 +25,9 @@ MN_REPO=https://github.com/zorglube/MovieNight.git
 MN_HOME=/usr/local/movienight
 MN_MAKEFILE=${MN_HOME}/Makefile.BSD
 mkdir ${MN_HOME}
-git clone ${MN_REPO} ${MN_HOME} && echo " Cloned "
+echo "=> Git Clonning "
+git clone ${MN_REPO} ${MN_HOME} && echo "=> Cloned "
+echo "=> Building "
 make TARGET=${TARGET} ARCH=${ARCH} -f ${MN_MAKEFILE} -C ${MN_HOME} && echo " Build end "
 chown -R ${UID}:${GID} ${MN_HOME}
 # Set the MovieNight config
