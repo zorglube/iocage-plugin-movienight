@@ -32,7 +32,6 @@ wget https://github.com/zorglube/MovieNight/releases/download/2021-02-16/MovieNi
 chown -R ${UID}:${GID} ${MN_HOME}
 
 # Set the MovieNight config
-rm ${MN_HOME}/settings.json
 mv ${MN_HOME}/settings-freebsd.json ${MN_HOME}/settings.json
 chmod -Rv 755 ${MN_HOME}
 chmod +x ${MN_HOME}/MovieNight
