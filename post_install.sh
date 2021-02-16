@@ -38,8 +38,8 @@ echo ""
 echo " ==> Building "
 make TARGET=${TARGET} ARCH=${ARCH} -f ${MN_MAKEFILE} -C ${MN_HOME} && echo " ==> Build end "
 
-while [ ! -f ${MN_HOME]/MovieNight ]; 
-	echo " ==> Sleep 5";
+while [ ! -f ${MN_HOME}/MovieNight ]; 
+	echo " Didn't found ${MN_HOME}/MovieNight ==> Sleep 5";
 	do sleep 5; 
 done
 
@@ -48,7 +48,7 @@ chown -R ${UID}:${GID} ${MN_HOME}
 # Set the MovieNight config
 rm ${MN_HOME}/settings.json
 mv ${MN_HOME}/settings-freebsd.json ${MN_HOME}/settings.json
-chmod 755 ${MN_HOME}
+chmod -Rv 755 ${MN_HOME}
 chmod +x ${MN_HOME}/MovieNight
 
 # Create MN log file
