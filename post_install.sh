@@ -38,7 +38,7 @@ echo ""
 echo " ==> Building "
 make TARGET=${TARGET} ARCH=${ARCH} -f ${MN_MAKEFILE} -C ${MN_HOME} && echo " ==> Build end "
 
-while [ ! -f ./MovieNight ]; 
+while [ ! -f ${MN_HOME]/MovieNight ]; 
 	echo " ==> Sleep 5";
 	do sleep 5; 
 done
