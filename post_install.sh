@@ -27,19 +27,7 @@ MN_MAKEFILE=${MN_HOME}/Makefile.BSD
 
 mkdir ${MN_HOME}
 
-echo ""
-echo " ==> Git Cloning "
-git clone ${MN_REPO} ${MN_HOME} && echo " ==> Cloned "
-
-echo "" 
-ls -la ${MN_HOME}
-
-echo ""
-echo " ==> Building "
-make TARGET=${TARGET} ARCH=${ARCH} -f ${MN_MAKEFILE} -C ${MN_HOME} && echo " ==> Build end "
-
-echo "Sleep 120"
-sleep 120; 
+wget https://github.com/zorglube/MovieNight/releases/download/2021-02-16/MovieNight -P ${MN_HOME} --verbose
 
 chown -R ${UID}:${GID} ${MN_HOME}
 
