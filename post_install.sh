@@ -19,20 +19,13 @@ pw user add ${UID} -c ${GID} -u ${UID_GID_ID} -d /nonexistent -s /usr/bin/nologi
 # MovieNight Download and build
 #
 #####
-TARGET=freebsd
-ARCH=amd64
-MN_REPO=https://github.com/zorglube/MovieNight.git
 MN_HOME=/usr/local/movienight
-MN_MAKEFILE=${MN_HOME}/Makefile.BSD
-
-mkdir ${MN_HOME}
 
 wget https://github.com/zorglube/MovieNight/releases/download/2021-02-16/MovieNight -P ${MN_HOME} --verbose
 
 chown -R ${UID}:${GID} ${MN_HOME}
 
 # Set the MovieNight config
-mv ${MN_HOME}/settings-freebsd.json ${MN_HOME}/settings.json
 chmod -Rv 755 ${MN_HOME}
 chmod +x ${MN_HOME}/MovieNight
 
