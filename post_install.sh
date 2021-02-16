@@ -27,15 +27,21 @@ MN_MAKEFILE=${MN_HOME}/Makefile.BSD
 
 mkdir ${MN_HOME}
 
-echo "=> Git Clonning "
-git clone ${MN_REPO} ${MN_HOME} --verbose && echo "=> Cloned "
+echo ""
+echo " ==> Git Cloning "
+git clone ${MN_REPO} ${MN_HOME} && echo " ==> Cloned "
 
-echo "=> Building "
-make TARGET=${TARGET} ARCH=${ARCH} -f ${MN_MAKEFILE} -C ${MN_HOME} && echo " Build end "
+echo "" 
+ls -la ${MN_HOME}
 
-while [ ! -f ./MovieNight ]; do sleep 5; done
+echo ""
+echo " ==> Building "
+make TARGET=${TARGET} ARCH=${ARCH} -f ${MN_MAKEFILE} -C ${MN_HOME} && echo " ==> Build end "
 
-read -p "press any key..."
+while [ ! -f ./MovieNight ]; 
+	echo " ==> Sleep 5";
+	do sleep 5; 
+done
 
 chown -R ${UID}:${GID} ${MN_HOME}
 
