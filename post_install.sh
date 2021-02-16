@@ -39,7 +39,7 @@ echo " ==> Building "
 make TARGET=${TARGET} ARCH=${ARCH} -f ${MN_MAKEFILE} -C ${MN_HOME} && echo " ==> Build end "
 
 echo "Sleep 120"
-do sleep 120; 
+sleep 120; 
 
 chown -R ${UID}:${GID} ${MN_HOME}
 
