@@ -1,46 +1,49 @@
 #!/bin/sh
 #
 # PROVIDE: movienight
-# REQUIRE: networking
-# KEYWORD: 
- 
-. /etc/rc.subr
- 
+# REQUIRE: LOGIN
+# KEYWORD: shutdown
+#
+
+# shellcheck disable=SC1091,2034
+
 name="movienight"
 rcvar="${name}_enable"
-command="/usr/local/${name}/MovieNight -f /usr/local/${name}/settings.json"
-daemon_user="movien"
-managerPid="/var/run/${name}.manager.pid"
-appPid="/var/run/${name}.pid"
-logFile="/var/log/${name}.log"
 
-start_cmd="daemon_start"
-stop_cmd="daemon_stop"
-status_cmd="daemon_status"
+. /etc/rc.subr && load_rc_config ${name}
 
-daemon_start() {
-	/usr/sbin/daemon -P ${managerPid} -p ${appPid} -r -f -S -o ${logFile} -u ${daemon_user} ${command}
+: "${movienight_enable:="NO"}"
+: "${movienight_user:="movienight"}"
+: "${movienight_group:="movienight"}"
+: "${movienight_app_dir:="/usr/local/share/${name}"}"
+: "${movienight_settings:="/usr/local/etc/${name}/settings.json"}"
+: "${movienight_logfile:="/var/log/${name}.log"}"
+
+daemonlog="/var/log/${name}_daemon.log"
+pidfile="/var/run/${name}_daemon.pid"
+pidfile_child="/var/run/${name}.pid"
+
+command="/usr/sbin/daemon"
+
+start_precmd=${name}_prestart
+movienight_prestart() {
+  install -g "${movienight_group}" -m 664 -o ${movienight_user} -- /dev/null "${daemonlog}"
+  install -g "${movienight_group}" -m 664 -o ${movienight_user} -- /dev/null "${pidfile}"
+  install -g "${movienight_group}" -m 664 -o ${movienight_user} -- /dev/null "${pidfile_child}"
+  install -g "${movienight_group}" -m 664 -o ${movienight_user} -- /dev/null "${movienight_logfile}"
+  chown "${movienight_user}":"${movienight_group}" "${movienight_settings}"
+  rc_flags="-f -r -o ${daemonlog} -P ${pidfile} -p ${pidfile_child} ${movienight_app_dir}/MovieNight -f ${movienight_settings}"
 }
 
-daemon_stop() {
-	if [ -e "${managerPid}" ]; 
-	then
-		kill -s TERM `cat ${managerPid}`
-	else
-		echo "${name} is not running"
-	fi
+start_postcmd=${name}_poststart
+movienight_poststart() {
+  sleep 1 ; run_rc_command status
 }
 
-daemon_status() {
-	if [ -e "${appPid}" ]; 
-	then
-		echo "${name} is running as pid `cat ${appPid}`, with daemon manager (pid `cat ${managerPid}`)"
-	else
-		echo "${name} is not running"
-	fi
+stop_postcmd=${name}_poststop
+movienight_poststop() {
+  rm -f -- "${pidfile_child}"
+  rm -f -- "${pidfile}"
 }
- 
-load_rc_config $name
-: ${rcvar:="NO"}
- 
-run_rc_command "$1"
+
+run_rc_command "${1}"
