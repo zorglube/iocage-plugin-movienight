@@ -1,6 +1,6 @@
 #!/bin/sh
 
-wget https://github.com/zorglube/MovieNight/releases/download/2021-02-16/MovieNight -P /usr/local/movienight --verbose
+wget https://github.com/zorglube/MovieNight/releases/download/2021-02-16/MovieNight -P /usr/local/movienight
 
 chmod +x /usr/local/movienight/MovieNight
 
