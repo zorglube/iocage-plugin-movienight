@@ -20,7 +20,7 @@ Once you've install the GUI should be accessible buy opening `http://JAIL_IP:808
 
 ## Movie Night running configuration
 
-I strongly recommend you to read the MovieNight manual and update the settings, by opening an console into the jail an editing `nano /usr/local/movienight/setting.json` and restart the Jail.
+I strongly recommend you to read the MovieNight manual and update the settings, by opening an console into the jail an editing `nano /usr/local/etc/movienight/setting.json` and restart the Jail.
 
 ## Support and Discussion
 
@@ -30,4 +30,5 @@ Questions or issues about this resource can be raised in [issues](https://github
 
 ## Disclamer
 
-This plugin deploy this [MovieNight repo](https://github.com/zorglube/MovieNight), witch an fork of the official [MovieNight repo](https://github.com/zorchenhimer/MovieNight). This plugin had received the permission of [Zorchenhimer](https://github.com/zorchenhimer).
+This plugin deploy the source code coming from [here](https://github.com/zorchenhimer/MovieNight). 
+This plugin had received the permission of [Zorchenhimer](https://github.com/zorchenhimer).
