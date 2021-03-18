@@ -18,7 +18,7 @@ sysrc ${service_name}_settings="${service_config}"
 ## Install the jail's primary service, Movie Night
 echo -e "\nInstalling Movie Night..."
 git clone "https://github.com/zorchenhimer/MovieNight.git" "${service_directory}"
-make TARGET=freebsd ARCH=amd64 -f "${service_directory}/Makefile.BSD" -C "${service_directory}"
+gmake TARGET=freebsd ARCH=amd64 -f "${service_directory}/Makefile" -C "${service_directory}"
 
 ## Enable and start the Movie Night service
 chmod +x "/usr/local/etc/rc.d/${service_name}"
