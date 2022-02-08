@@ -20,7 +20,7 @@ Once you've install the GUI should be accessible buy opening `http://JAIL_IP:808
 
 ## Movie Night running configuration
 
-I strongly recommend you to read the MovieNight manual and update the settings, by opening an console into the jail, editing `/usr/local/etc/movienight/setting.json` and restart the Jail.
+I strongly recommend you to read the MovieNight manual and update the settings, by opening an console into the jail, editing `/usr/local/etc/movienight/settings.json` and restart the Jail.
 
 ## Support and Discussion
 
