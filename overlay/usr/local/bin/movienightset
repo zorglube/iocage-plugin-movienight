@@ -1,0 +1,35 @@
+#!/bin/sh
+
+MOVIENIGHT_VER=movienight
+CONF_FILE="/usr/local/etc/movienight/settings.json"
+
+set()
+{
+	shift
+	value=$@
+	key=$2
+	if [ $? -eq 0 ] && [ "$value" != "" ] ; then
+		echo "Changing $CONF_FILE#$key"
+		jq '.$key = ":$value"' $CONF_FILE
+	else
+		echo "Error when updateing $CONF_FILE#$key">2 ; exit 1
+	fi
+	exit 0
+}
+
+set_rtmp()
+{
+	set $@ "RtmpListenAddress"
+}
+
+set_port()
+{
+	set $@ "ListenAddress"
+}
+
+# Stub for something which sets settings
+case $1 in
+	rtmpport) set_rtmp "$@" ;;
+	listenport) set_port "$@" ;;
+	*) echo "Unknown option" ;;
+esac
