@@ -1,0 +1,23 @@
+{
+	"servicerestart": "service movienight restart",
+	"serviceget": "/usr/local/bin/movienightget",
+	"serviceset": "/usr/local/bin/movienightget",
+	"options": {
+		"rtmpport": {
+			"type": "int",
+			"name": "MovieNight Rtmp port",
+			"description": "The RTMP port exposed by MovieNight",
+			"range": "1024-32000",
+            "default": "1935",
+			"requirerestart": true
+		},
+		"listenport": {
+			"type": "int",
+			"name": "MovieNight Listenig Port",
+			"description": "The HTTP port exposed by MovieNight",
+			"range": "1024-32000",
+            "default": "8089",
+			"requirerestart": true
+		}
+	}
+}

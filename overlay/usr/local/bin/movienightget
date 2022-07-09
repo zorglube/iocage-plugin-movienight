@@ -1,0 +1,36 @@
+#!/bin/sh
+
+MOVIENIGHT_VER=movienight
+CONF_FILE="/usr/local/etc/movienight/settings.json"
+
+get_all()
+{
+	get "RtmpListenAddress"
+	get "ListenAddress"
+}
+
+# get_rtmp()
+# {
+# 	rtmpport=$(jq 'RtmpListenAddress' $CONF_FILE)
+# 	echo "$rtmpport"
+# }
+
+# get_port()
+# {
+# 	listenport=$(jq 'ListenAddress' $CONF_FILE)
+# 	echo "$listenport"
+# }
+
+get()
+{
+	out=$(jq '$@' $CONF_FILE)
+	echo "$out"
+}
+
+# Stub for something which gets settings
+case $1 in
+	getall) get_all ;;
+	rtmpport) get "RtmpListenAddress" ;;
+	listenport) get "ListenAddress" ;;
+	*) echo "Unknown option" ;;
+esac
